@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Access Terminal</title>
+    <style>
+        :root {
+            --hacker-green: #00ff41;
+            --matrix-green: #008f11;
+            --dark-bg: #0a0a0a;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: var(--hacker-green);
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        .terminal {
+            width: 100vw;
+            height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--matrix-green);
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .logo {
+            font-weight: bold;
+            letter-spacing: 2px;
+            animation: blink 1.5s infinite;
+        }
+        
+        .status {
+            color: var(--matrix-green);
+        }
+        
+        .main-display {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            height: 75vh;
+        }
+        
+        .sidebar {
+            border-right: 1px dashed var(--matrix-green);
+            padding-right: 15px;
+        }
+        
+        .content-area {
+            position: relative;
+        }
+        
+        .matrix-rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.15;
+        }
+        
+        .command-line {
+            position: fixed;
+            bottom: 20px;
+            width: calc(100% - 40px);
+            display: flex;
+        }
+        
+        .prompt {
+            margin-right: 10px;
+        }
+        
+        #command-input {
+            background: transparent;
+            border: none;
+            color: var(--hacker-green);
+            font-family: 'Courier New', monospace;
+            width: 100%;
+            outline: none;
+        }
+        
+        .module {
+            background: rgba(0, 255, 65, 0.05);
+            border: 1px solid var(--matrix-green);
+            border-radius: 3px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .module-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .progress-container {
+            height: 5px;
+            background: #111;
+            margin-top: 5px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: var(--hacker-green);
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .network-node {
+            width: 10px;
+            height: 10px;
+            background: var(--hacker-green);
+            border-radius: 50%;
+            position: absolute;
+            opacity: 0.7;
+        }
+        
+        .network-line {
+            position: absolute;
+            background: var(--matrix-green);
+            height: 1px;
+            transform-origin: left center;
+            opacity: 0.3;
+        }
+        
+        .glitch {
+            animation: glitch 1s linear infinite;
+        }
+        
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .scanning-text {
+            background: linear-gradient(to right, 
+                transparent 0%, 
+                rgba(0, 255, 65, 0.3) 50%, 
+                transparent 100%);
+            background-size: 200% auto;
+            animation: scan 3s linear infinite;
+        }
+        
+        @keyframes scan {
+            0% { background-position: -100% 0; }
+            100% { background-position: 200% 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <div class="matrix-rain" id="matrixRain"></div>
+        
+        <div class="header">
+            <div class="logo">SYSTEM_ACCESS // ROOT</div>
+            <div class="status">CONNECTED <span id="ipDisplay">192.168.1.105</span></div>
+        </div>
+        
+        <div class="main-display">
+            <div class="sidebar">
+                <div class="module">
+                    <div class="module-title">
+                        <span>SYSTEM STATUS</span>
+                        <span class="glitch">LIVE</span>
+                    </div>
+                    <div>CPU: <span id="cpuUsage">47%</span></div>
+                    <div>MEM: <span id="memUsage">68%</span></div>
+                    <div>NET: <span id="netUsage">1.4 MB/s</span></div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="sysProgress"></div>
+                    </div>
+                </div>
+                
+                <div class="module">
+                    <div class="module-title">
+                        <span>TARGET SYSTEMS</span>
+                        <span>3 ACTIVE</span>
+                    </div>
+                    <div class="scanning-text">SCANNING NETWORK...</div>
+                    <div id="targetList">
+                        <div>> MAINFRAME_01</div>
+                        <div>> DATABASE_03</div>
+                        <div>> ROUTER_05</div>
+                    </div>
+                </div>
+                
+                <div class="module">
+                    <div class="module-title">
+                        <span>ACCESS TOOLS</span>
+                        <span>READY</span>
+                    </div>
+                    <div>> PORT_SCANNER</div>
+                    <div>> EXPLOIT_KIT</div>
+                    <div>> BRUTE_FORCE</div>
+                    <div>> SQL_INJECT</div>
+                </div>
+            </div>
+            
+            <div class="content-area" id="networkMap">
+                <!-- Network visualization will be generated by JS -->
+            </div>
+        </div>
+        
+        <div class="command-line">
+            <div class="prompt">root@system:~#</div>
+            <input type="text" id="command-input" autofocus>
+        </div>
+    </div>
+
+    <script>
+        // Matrix rain effect
+        function createMatrixRain() {
+            const chars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+            const canvas = document.createElement('canvas');
+            canvas.id = 'matrixCanvas';
+            document.getElementById('matrixRain').appendChild(canvas);
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const ctx = canvas.getContext('2d');
+            const columns = Math.floor(canvas.width / 20);
+            const drops = [];
+            
+            for (let i = 0; i < columns; i++) {
+                drops[i] = Math.random() * -100;
+            }
+            
+            function draw() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#00ff41';
+                ctx.font = '15px monospace';
+                
+                for (let i = 0; i < drops.length; i++) {
+                    const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                    const x = i * 20;
+                    const y = drops[i] * 20;
+                    
+                    ctx.fillText(text, x, y);
+                    
+                    if (y > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+            
+            setInterval(draw, 33);
+        }
+        
+        // Network visualization
+        function createNetworkMap() {
+            const container = document.getElementById('networkMap');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            
+            // Create nodes
+            const nodeCount = 8 + Math.floor(Math.random() * 5);
+            const nodes = [];
+            
+            for (let i = 0; i < nodeCount; i++) {
+                const node = document.createElement('div');
+                node.className = 'network-node';
+                
+                const x = 50 + Math.random() * (width - 100);
+                const y = 50 + Math.random() * (height - 100);
+                
+                node.style.left = `${x}px`;
+                node.style.top = `${y}px`;
+                
+                container.appendChild(node);
+                nodes.push({ element: node, x, y });
+            }
+            
+            // Create connections
+            const connectionCount = Math.floor(nodeCount * 1.5);
+            for (let i = 0; i < connectionCount; i++) {
+                const a = Math.floor(Math.random() * nodeCount);
+                let b = Math.floor(Math.random() * nodeCount);
+                while (b === a) b = Math.floor(Math.random() * nodeCount);
+                
+                const line = document.createElement('div');
+                line.className = 'network-line';
+                
+                const nodeA = nodes[a];
+                const nodeB = nodes[b];
+                
+                const length = Math.sqrt(
+                    Math.pow(nodeB.x - nodeA.x, 2) + 
+                    Math.pow(nodeB.y - nodeA.y, 2)
+                );
+                
+                const angle = Math.atan2(
+                    nodeB.y - nodeA.y, 
+                    nodeB.x - nodeA.x
+                ) * 180 / Math.PI;
+                
+                line.style.width = `${length}px`;
+                line.style.left = `${nodeA.x}px`;
+                line.style.top = `${nodeA.y}px`;
+                line.style.transform = `rotate(${angle}deg)`;
+                
+                container.appendChild(line);
+                
+                // Animate the connection
+                setInterval(() => {
+                    line.style.opacity = Math.random() > 0.7 ? '0.7' : '0.2';
+                }, 1000 + Math.random() * 3000);
+            }
+            
+            // Animate nodes
+            nodes.forEach(node => {
+                setInterval(() => {
+                    node.element.style.opacity = Math.random() > 0.3 ? '0.9' : '0.4';
+                    node.element.style.boxShadow = `0 0 ${Math.random() * 5}px var(--hacker-green)`;
+                }, 500 + Math.random() * 2000);
+            });
+        }
+        
+        // System stats animation
+        function animateSystemStats() {
+            setInterval(() => {
+                document.getElementById('cpuUsage').textContent = 
+                    `${Math.floor(30 + Math.random() * 50)}%`;
+                document.getElementById('memUsage').textContent = 
+                    `${Math.floor(40 + Math.random() * 40)}%`;
+                document.getElementById('netUsage').textContent = 
+                    `${(Math.random() * 3).toFixed(1)} MB/s`;
+                
+                document.getElementById('sysProgress').style.width = 
+                    `${Math.floor(20 + Math.random() * 80)}%`;
+            }, 2000);
+        }
+        
+        // Command line interaction
+        function setupCommandLine() {
+            const input = document.getElementById('command-input');
+            
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const command = input.value.trim();
+                    input.value = '';
+                    
+                    // Process command
+                    if (command) {
+                        // In a real implementation, you would process commands here
+                        console.log(`Command executed: ${command}`);
+                        
+                        // Visual feedback
+                        document.querySelector('.logo').classList.add('glitch');
+                        setTimeout(() => {
+                            document.querySelector('.logo').classList.remove('glitch');
+                        }, 500);
+                    }
+                }
+            });
+        }
+        
+        // Initialize all effects
+        window.onload = function() {
+            createMatrixRain();
+            createNetworkMap();
+            animateSystemStats();
+            setupCommandLine();
+            
+            // Random IP display
+            setInterval(() => {
+                const ip = Array.from({length: 4}, () => 
+                    Math.floor(Math.random() * 255)).join('.');
+                document.getElementById('ipDisplay').textContent = ip;
+            }, 5000);
+        };
+        
+        // Handle window resize
+        window.onresize = function() {
+            const canvas = document.getElementById('matrixCanvas');
+            if (canvas) {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+        };
+    </script>
+</body>
+</html>
